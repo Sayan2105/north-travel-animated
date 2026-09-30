@@ -84,6 +84,7 @@ function deepMerge(target, source) {
 }
 
 const SETTINGS = readSettings();
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 function setText(id, value) {
   const el = document.getElementById(id);
@@ -169,35 +170,57 @@ function applySettings() {
 function makeStars() {
   const root = document.getElementById("heroStars");
   if (!root) return;
+  const count = window.matchMedia("(max-width: 767px)").matches ? 70 : 110;
   const frag = document.createDocumentFragment();
-  for (let i = 0; i < 125; i++) {
+  for (let i = 0; i < count; i++) {
     const s = document.createElement("span");
-    s.className = "star" + (Math.random() > .91 ? " big" : "");
+    s.className = "star" + (Math.random() > .94 ? " big" : "");
     s.style.left = `${Math.random() * 100}%`;
-    s.style.top = `${Math.random() * 72}%`;
-    s.style.setProperty("--twinkle", `${2 + Math.random() * 5}s`);
-    s.style.animationDelay = `${Math.random() * -6}s`;
+    s.style.top = `${Math.random() * 65}%`;
+    s.style.setProperty("--twinkle", `${3 + Math.random() * 5}s`);
+    s.style.animationDelay = `${Math.random() * -8}s`;
     frag.appendChild(s);
   }
   root.appendChild(frag);
+}
+
+
+
+let heroVisible = true;
+const heroEl = document.getElementById("hero");
+if (heroEl && "IntersectionObserver" in window) {
+  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; }).observe(heroEl);
+}
+
+const METEOR_GAP = [200, 800]; // min and max ms between meteors. Lower = more
+
+function spawnMeteor(root) {
+  const angle = 22 + Math.random() * 18;
+  const rad = angle * Math.PI / 180;
+  const dist = Math.min(window.innerWidth * 0.3, 240) + Math.random() * 60;
+  const m = document.createElement("span");
+  m.className = "meteor";
+  m.style.left = `${8 + Math.random() * 80}%`;
+  m.style.top = `${3 + Math.random() * 35}%`;
+  m.style.width = `${50 + Math.random() * 60}px`;
+  m.style.setProperty("--rot", `${angle}deg`);
+  m.style.setProperty("--dx", `${Math.cos(rad) * dist}px`);
+  m.style.setProperty("--dy", `${Math.sin(rad) * dist}px`);
+  m.style.setProperty("--dur", `${0.5 + Math.random() * 0.4}s`);
+  root.appendChild(m);
+  requestAnimationFrame(() => m.classList.add("fly"));
+  m.addEventListener("animationend", () => m.remove(), { once: true });
 }
 
 function meteorLoop() {
   const root = document.getElementById("heroMeteors");
   if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const m = document.createElement("span");
-  m.className = "meteor";
-  m.style.left = `${3 + Math.random() * 72}%`;
-  m.style.top = `${4 + Math.random() * 50}%`;
-  m.style.width = `${100 + Math.random() * 160}px`;
-  m.style.setProperty("--rot", `${-18 - Math.random() * 20}deg`);
-  m.style.setProperty("--dx", `${34 + Math.random() * 40}vw`);
-  m.style.setProperty("--dy", `${16 + Math.random() * 28}vh`);
-  root.appendChild(m);
-  requestAnimationFrame(() => m.classList.add("fly"));
-  setTimeout(() => m.remove(), 1300);
-  setTimeout(meteorLoop, 260 + Math.random() * 640);
+  if (heroVisible && !document.hidden) {
+    const burst = Math.random() > 0.55 ? 2 : 1;
+    for (let i = 0; i < burst; i++) setTimeout(() => spawnMeteor(root), i * 180);
+  }
+  setTimeout(meteorLoop, METEOR_GAP[0] + Math.random() * (METEOR_GAP[1] - METEOR_GAP[0]));
 }
 
 function setupHero() {
@@ -254,18 +277,19 @@ function setupFilmVideo() {
   video.load();
   video.pause();
 
+  window.addEventListener("touchstart", () => {
+    video.play().then(() => video.pause()).catch(() => {});
+  }, { once: true, passive: true });
+
   let duration = 0;
   let targetTime = 0;
   let raf = 0;
   let ready = false;
 
   const renderTime = () => {
-    if (ready && Number.isFinite(duration)) {
+    if (ready && !video.seeking) {
       const delta = targetTime - video.currentTime;
-      if (Math.abs(delta) > 0.008) {
-        const next = video.currentTime + delta * 0.22;
-        if (Math.abs(next - video.currentTime) > 0.002) video.currentTime = next;
-      }
+      if (Math.abs(delta) > 0.01) video.currentTime += delta * 0.18;
     }
     raf = requestAnimationFrame(renderTime);
   };
@@ -321,9 +345,21 @@ function setupFinalImage() {
 
 applySettings();
 makeStars();
-meteorLoop();
+setTimeout(meteorLoop, 20);
 setupHero();
 setupFilmVideo();
 setupFinalImage();
 window.addEventListener("load", () => ScrollTrigger.refresh());
 window.addEventListener("resize", () => ScrollTrigger.refresh());
+
+
+const navEl = document.getElementById("siteNav");
+const navBtn = document.getElementById("navToggle");
+function setMenu(open) {
+  navEl.classList.toggle("menu-open", open);
+  navBtn.classList.toggle("open", open);
+  navBtn.setAttribute("aria-expanded", open);
+  document.body.style.overflow = open ? "hidden" : "";
+}
+navBtn?.addEventListener("click", () => setMenu(!navEl.classList.contains("menu-open")));
+navEl?.querySelectorAll("nav a").forEach(a => a.addEventListener("click", () => setMenu(false)));

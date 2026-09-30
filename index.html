@@ -20,12 +20,13 @@
       <span class="nav-dot" aria-hidden="true"></span>
       <span id="navBrandText">YOUR COMPANY</span>
     </a>
-    <nav aria-label="Primary navigation">
+    <nav aria-label="Primary navigation" id="primaryNav">
       <a href="#journey" data-nav="journey">Journey</a>
       <a href="#about" data-nav="about">About</a>
       <a href="#trips" data-nav="trips">Trips</a>
       <a href="#contact" data-nav="contact">Contact</a>
     </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="primaryNav"><span></span><span></span></button>
   </header>
 
   <main id="main">
@@ -76,7 +77,6 @@
                muted
                playsinline
                preload="metadata"
-               poster="assets/images/hero-stargazing.webp"
                aria-label="Motorcycle journey through the Himalayan mountains">
           <source id="bikeVideoDesktop" src="assets/video/scene-bike.webm" type="video/webm" media="(min-width: 768px)">
           <source id="bikeVideoMobile" src="assets/video/scene-bike.webm" type="video/webm">
