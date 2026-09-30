@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Site Settings</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-head">
+      <div>
+        <p>EDITOR</p>
+        <h1>Site settings</h1>
+      </div>
+      <a href="index.html">Open site</a>
+    </header>
+
+    <form id="settingsForm">
+      <section class="panel">
+        <h2>Brand</h2>
+        <div class="grid">
+          <label>Company name<input id="brandName" required></label>
+          <label>Tagline<input id="brandTagline"></label>
+          <label>Heading font<select id="headingFont"><option>Cormorant Garamond</option><option>Playfair Display</option><option>Space Grotesk</option><option>DM Sans</option><option>Manrope</option></select></label>
+          <label>Body font<select id="bodyFont"><option>Manrope</option><option>DM Sans</option><option>Space Grotesk</option><option>Playfair Display</option><option>Cormorant Garamond</option></select></label>
+        </div>
+        <label>Logo image<input id="logoFile" type="file" accept="image/*"></label>
+        <p class="hint">For the current free video, the logo/name overlay also covers the fixed generator watermark area.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Hero</h2>
+        <div class="grid">
+          <label>Hero kicker<input id="heroKicker"></label>
+          <label>Hero title<input id="heroTitle"></label>
+          <label>Hero tagline<input id="heroTagline"></label>
+          <label>Scroll hint<input id="scrollHint"></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Navbar</h2>
+        <div class="grid">
+          <label>Journey<input id="navJourney"></label>
+          <label>About<input id="navAbout"></label>
+          <label>Trips<input id="navTrips"></label>
+          <label>Contact<input id="navContact"></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Story</h2>
+        <label>Journey title<input id="journeyTitle"></label>
+        <label>Journey text<textarea id="journeyText"></textarea></label>
+        <label>About title<input id="aboutTitle"></label>
+        <label>About text<textarea id="aboutText"></textarea></label>
+        <label>Why us title<input id="whyTitle"></label>
+        <div class="grid three">
+          <label>Why 1 title<input id="why1Title"></label><label>Why 1 text<input id="why1Text"></label>
+          <label>Why 2 title<input id="why2Title"></label><label>Why 2 text<input id="why2Text"></label>
+          <label>Why 3 title<input id="why3Title"></label><label>Why 3 text<input id="why3Text"></label>
+        </div>
+        <label>Trips title<input id="tripsTitle"></label>
+        <label>Trips text<textarea id="tripsText"></textarea></label>
+        <label>Trip tags, comma separated<input id="tripTags"></label>
+        <label>CTA title<input id="ctaTitle"></label>
+        <label>CTA text<textarea id="ctaText"></textarea></label>
+      </section>
+
+      <section class="panel">
+        <h2>SEO text</h2>
+        <label>About heading<input id="seoAboutTitle"></label>
+        <label>About body<textarea id="seoAboutBody"></textarea></label>
+        <label>Trips heading<input id="seoTripsTitle"></label>
+        <label>Trips body<textarea id="seoTripsBody"></textarea></label>
+      </section>
+
+      <section class="panel">
+        <h2>Contact</h2>
+        <div class="grid">
+          <label>WhatsApp number<input id="waNumber"></label>
+          <label>Instagram URL<input id="instagram"></label>
+          <label>Email<input id="email" type="email"></label>
+          <label>WhatsApp message<input id="waMessage"></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Media</h2>
+        <div class="grid">
+          <label>Desktop video path<input id="desktopVideo"></label>
+          <label>Mobile video path<input id="mobileVideo"></label>
+          <label>Final image path<input id="finalImage"></label>
+        </div>
+        <p class="hint">Later, these paths can be replaced by Filament-managed media records. Keep the text content in the database, not in JS.</p>
+      </section>
+
+      <div class="actions">
+        <button type="submit">Save settings</button>
+        <button type="button" class="secondary" id="resetBtn">Reset defaults</button>
+        <span id="status"></span>
+      </div>
+    </form>
+  </main>
+  <script src="admin.js"></script>
+</body>
+</html>

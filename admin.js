@@ -1,0 +1,32 @@
+const DEFAULTS = {
+  brand:{name:"YOUR COMPANY",logoDataUrl:"",tagline:"Journeys beyond the ordinary.",headingFont:"Cormorant Garamond",bodyFont:"Manrope"},
+  hero:{kicker:"YOUR COMPANY",title:"Into the mountains.",tagline:"Journeys beyond the ordinary.",scrollHint:"SCROLL TO TRAVEL"},
+  nav:{journey:"Journey",about:"About",trips:"Trips",contact:"Contact"},
+  content:{journeyTitle:"The journey begins.",journeyText:"One road. One rider. A long way into the Himalayas.",aboutTitle:"We go where the road gets quiet.",aboutText:"We build mountain journeys around real roads, real places and time worth remembering.",whyTitle:"Less noise. More road.",why:[{title:"Small groups",text:"More road, less waiting."},{title:"Local routes",text:"Journeys shaped around the terrain."},{title:"Human support",text:"A real person when you need one."}],tripsTitle:"Ladakh. Himachal. North India.",tripsText:"Choose a route or shape your own. The landscape changes. The feeling stays.",tripTags:["Ladakh","Himachal","North India"],ctaTitle:"Your road starts here.",ctaText:"Tell us where you want to ride and we will send the details."},
+  seo:{aboutTitle:"Mountain travel built around the road.",aboutBody:"Replace this placeholder copy with the real company story, experience, route knowledge and service details.",tripsTitle:"Ladakh and the wider Himalayas.",tripsBody:"Replace this with real destination, itinerary and journey information."},
+  contact:{whatsappNumber:"919100000000",whatsappMessage:"Hi! I want to plan a Himalayan journey. Please send me the details.",instagramUrl:"https://instagram.com/",email:"hello@example.com",ctaText:"WHATSAPP"},
+  media:{desktopVideo:"assets/video/scene-bike.webm",mobileVideo:"assets/video/scene-bike.webm",finalImage:""}
+};
+function merge(a,b){if(!b||typeof b!=="object")return a;for(const[k,v]of Object.entries(b)){if(Array.isArray(v))a[k]=v;else if(v&&typeof v==="object")a[k]=merge(a[k]||{},v);else a[k]=v}return a}
+function load(){try{return merge(structuredClone(DEFAULTS),JSON.parse(localStorage.getItem("northbound_settings")||"{}"))}catch{return structuredClone(DEFAULTS)}}
+let settings=load();
+const $=id=>document.getElementById(id);
+function fill(){
+  $("brandName").value=settings.brand.name; $("brandTagline").value=settings.brand.tagline; $("headingFont").value=settings.brand.headingFont; $("bodyFont").value=settings.brand.bodyFont;
+  $("heroKicker").value=settings.hero.kicker; $("heroTitle").value=settings.hero.title; $("heroTagline").value=settings.hero.tagline; $("scrollHint").value=settings.hero.scrollHint;
+  $("navJourney").value=settings.nav.journey; $("navAbout").value=settings.nav.about; $("navTrips").value=settings.nav.trips; $("navContact").value=settings.nav.contact;
+  $("journeyTitle").value=settings.content.journeyTitle; $("journeyText").value=settings.content.journeyText; $("aboutTitle").value=settings.content.aboutTitle; $("aboutText").value=settings.content.aboutText; $("whyTitle").value=settings.content.whyTitle;
+  $("why1Title").value=settings.content.why[0]?.title||""; $("why1Text").value=settings.content.why[0]?.text||""; $("why2Title").value=settings.content.why[1]?.title||""; $("why2Text").value=settings.content.why[1]?.text||""; $("why3Title").value=settings.content.why[2]?.title||""; $("why3Text").value=settings.content.why[2]?.text||"";
+  $("tripsTitle").value=settings.content.tripsTitle; $("tripsText").value=settings.content.tripsText; $("tripTags").value=settings.content.tripTags.join(", "); $("ctaTitle").value=settings.content.ctaTitle; $("ctaText").value=settings.content.ctaText;
+  $("seoAboutTitle").value=settings.seo.aboutTitle; $("seoAboutBody").value=settings.seo.aboutBody; $("seoTripsTitle").value=settings.seo.tripsTitle; $("seoTripsBody").value=settings.seo.tripsBody;
+  $("waNumber").value=settings.contact.whatsappNumber; $("instagram").value=settings.contact.instagramUrl; $("email").value=settings.contact.email; $("waMessage").value=settings.contact.whatsappMessage;
+  $("desktopVideo").value=settings.media.desktopVideo; $("mobileVideo").value=settings.media.mobileVideo; $("finalImage").value=settings.media.finalImage;
+}
+function compressLogo(file){return new Promise((resolve,reject)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const max=420,scale=Math.min(1,max/img.width);const c=document.createElement("canvas");c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);const ctx=c.getContext("2d");ctx.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);resolve(c.toDataURL("image/webp",.82))};img.onerror=reject;img.src=url})}
+$("settingsForm").addEventListener("submit",async e=>{e.preventDefault();
+  if($("logoFile").files[0]) settings.brand.logoDataUrl=await compressLogo($("logoFile").files[0]);
+  settings={...settings,brand:{...settings.brand,name:$("brandName").value,tagline:$("brandTagline").value,headingFont:$("headingFont").value,bodyFont:$("bodyFont").value},hero:{kicker:$("heroKicker").value,title:$("heroTitle").value,tagline:$("heroTagline").value,scrollHint:$("scrollHint").value},nav:{journey:$("navJourney").value,about:$("navAbout").value,trips:$("navTrips").value,contact:$("navContact").value},content:{journeyTitle:$("journeyTitle").value,journeyText:$("journeyText").value,aboutTitle:$("aboutTitle").value,aboutText:$("aboutText").value,whyTitle:$("whyTitle").value,why:[{title:$("why1Title").value,text:$("why1Text").value},{title:$("why2Title").value,text:$("why2Text").value},{title:$("why3Title").value,text:$("why3Text").value}],tripsTitle:$("tripsTitle").value,tripsText:$("tripsText").value,tripTags:$("tripTags").value.split(",").map(x=>x.trim()).filter(Boolean),ctaTitle:$("ctaTitle").value,ctaText:$("ctaText").value},seo:{aboutTitle:$("seoAboutTitle").value,aboutBody:$("seoAboutBody").value,tripsTitle:$("seoTripsTitle").value,tripsBody:$("seoTripsBody").value},contact:{whatsappNumber:$("waNumber").value,instagramUrl:$("instagram").value,email:$("email").value,whatsappMessage:$("waMessage").value},media:{desktopVideo:$("desktopVideo").value,mobileVideo:$("mobileVideo").value,finalImage:$("finalImage").value}};
+  localStorage.setItem("northbound_settings",JSON.stringify(settings)); $("status").textContent="Saved. Open the site to preview.";
+});
+$("resetBtn").addEventListener("click",()=>{localStorage.removeItem("northbound_settings");settings=structuredClone(DEFAULTS);fill();$("status").textContent="Defaults restored."});
+fill();
